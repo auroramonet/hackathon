@@ -25,29 +25,31 @@ function App() {
   };
 
   return (
-    <Layout>
-      <div className="app">
-        <h1>Interactive 3D Map</h1>
-        <p>Search and explore locations in 3D</p>
+    <>
+      <div className="app-overlay">
+        <div className="app-header">
+          <h1>Catastrophe Data</h1>
+          <p>Search and explore locations in 3D</p>
+        </div>
         
-        <SearchBox 
-          onLocationSelect={handleLocationSelect}
-          placeholder="Search for any location..."
-        />
-        
-        <div className="app__map-container">
-          <MapSquare 
-            key={`map-${mapConfig.center[0]}-${mapConfig.center[1]}`}
-            size={500}
-            center={mapConfig.center}
-            zoom={mapConfig.zoom}
-            pitch={mapConfig.pitch}
-            bearing={mapConfig.bearing}
-            style="mapbox://styles/mapbox/satellite-streets-v12"
+        <div className="app-search">
+          <SearchBox 
+            onLocationSelect={handleLocationSelect}
+            placeholder="Search for any location..."
           />
         </div>
       </div>
-    </Layout>
+      
+      <MapSquare 
+        key={`map-${mapConfig.center[0]}-${mapConfig.center[1]}`}
+        fullScreen={true}
+        center={mapConfig.center}
+        zoom={mapConfig.zoom}
+        pitch={mapConfig.pitch}
+        bearing={mapConfig.bearing}
+        style="mapbox://styles/mapbox/satellite-streets-v12"
+      />
+    </>
   );
 }
 

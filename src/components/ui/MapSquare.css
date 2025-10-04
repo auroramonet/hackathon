@@ -5,3 +5,8 @@
   position: relative;
   overflow: hidden;
 }
+
+.map-square--fullscreen {
+  border: none;
+  border-radius: 0;
+}
