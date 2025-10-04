@@ -22,14 +22,11 @@
   font-weight: 400;
 }
 
-<<<<<<< HEAD
 .app__map-container {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-
-=======
 /* Map container styles */
 .map-container {
   width: 100%;
@@ -39,4 +36,3 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
->>>>>>> a438eef1ffd5f98e8a4cce90ea067b053d041c33

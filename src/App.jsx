@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import { useState } from 'react';
 import { Layout, MapSquare, SearchBox } from './components';
 import './App.css';
-=======
-import { Layout } from "./components";
-import "./App.css";
-import Map from "./components/Map";
->>>>>>> a438eef1ffd5f98e8a4cce90ea067b053d041c33
 
 function App() {
   const [mapConfig, setMapConfig] = useState({
@@ -33,7 +27,6 @@ function App() {
   return (
     <Layout>
       <div className="app">
-<<<<<<< HEAD
         <h1>Interactive 3D Map</h1>
         <p>Search and explore locations in 3D</p>
         
@@ -53,11 +46,6 @@ function App() {
             style="mapbox://styles/mapbox/satellite-streets-v12"
           />
         </div>
-=======
-        <h1>Welcome to Your React App</h1>
-        <p>Start building your amazing application here!</p>
-        <Map />
->>>>>>> a438eef1ffd5f98e8a4cce90ea067b053d041c33
       </div>
     </Layout>
   );
