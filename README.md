@@ -22,22 +22,21 @@ npm run preview
 
 ```
 src/
-├── components/           # Reusable components
-│   ├── layout/          # Layout components (Layout, Header, Footer)
-│   ├── ui/              # UI components (Button, Input, etc.)
-│   └── index.js         # Component exports
-├── hooks/               # Custom React hooks
-│   ├── useLocalStorage.js
-│   └── index.js
-├── utils/               # Utility functions
-│   └── index.js
-├── styles/              # Global styles
+├── backend/             # Backend server
+│   └── index.js         # Express server with Gemini AI integration
+├── components/          # Reusable components
+│   ├── layout/         # Layout components
+│   └── ui/             # UI components (Map, Drawing tools, etc.)
+├── hooks/              # Custom React hooks
+│   └── useLocalStorage.js
+├── services/           # API service layer
+│   └── api.js          # Backend API calls
+├── styles/             # Global styles
 │   └── globals.css
-├── assets/              # Static assets (images, icons)
-├── App.jsx              # Main App component
-├── App.css              # App-specific styles
-├── main.jsx             # Application entry point
-└── index.css            # Base styles
+├── App.jsx             # Main App component
+├── App.css             # App-specific styles
+├── main.jsx            # Application entry point
+└── index.css           # Base styles
 ```
 
 ## 🧱 Component Architecture
@@ -73,16 +72,69 @@ This project follows a **Lego-like component architecture**:
 ## 📦 Available Components
 
 ### Layout
+
 - `Layout`: Main application layout wrapper
 
 ### UI
+
 - `Button`: Flexible button component with variants and sizes
 
 ### Hooks
+
 - `useLocalStorage`: Persistent state with localStorage
 
 ### Utils
+
 - `cn`: Class name utility function
 - `formatDate`: Date formatting utility
 
-Start building your application by adding new components to the appropriate directories!
+## 🔌 Backend API Endpoints
+
+The backend server runs on **port 3001** and provides the following endpoints:
+
+### `POST /api/analyze`
+
+Analyze a drawn catastrophe area with AI.
+
+**Request:**
+
+```json
+{
+  "coordinates": [[lng, lat], ...],
+  "magnitude": 5.0,
+  "center": [lng, lat],
+  "placeName": "Location name"
+}
+```
+
+### `POST /api/recommendations`
+
+Get disaster-specific recommendations.
+
+### `POST /api/query`
+
+General AI question answering.
+
+### `GET /api/health`
+
+Server health check.
+
+## 🎯 How to Use
+
+1. **Search** for a location using the search box
+2. **Enable drawing** by clicking the Draw button
+3. **Set magnitude** using the slider (0-10)
+4. **Draw an area** by clicking and dragging on the map
+5. **View AI analysis** that appears automatically
+
+The drawn area will appear as a red 3D polygon, with height based on the magnitude level.
+
+## 📝 Environment Setup
+
+Create a `.env` file:
+
+```env
+VITE_MAPBOX_TOKEN=your_mapbox_token_here
+GEMINI_API_KEY=your_gemini_api_key_here
+PORT=3001
+```
