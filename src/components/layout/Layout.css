@@ -2,9 +2,17 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
 }
 
 .layout__main {
   flex: 1;
-  padding: 1rem;
+  padding: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
 }

@@ -1,1 +1,4 @@
 export { default as Button } from './Button';
+export { default as Map } from './Map';
+export { default as MapSquare } from './MapSquare';
+export { default as SearchBox } from './SearchBox';
