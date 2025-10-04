@@ -45,22 +45,35 @@ function App() {
 
     // Now we have bounding box data for API calls!
     if (drawingData.boundingBox) {
-      console.log('Bounding box for APIs:', drawingData.apiCoordinates);
-      
+      console.log("Bounding box for APIs:", drawingData.apiCoordinates);
+
       // Call population and building APIs with the 4 bounding box points
       try {
         const { south, west, north, east } = drawingData.apiCoordinates;
-        const areaAnalysis = await getCompleteAreaAnalysis(south, west, north, east);
-        console.log('📊 Area Analysis:', areaAnalysis);
-        
+        const areaAnalysis = await getCompleteAreaAnalysis(
+          south,
+          west,
+          north,
+          east
+        );
+        console.log("📊 Area Analysis:", areaAnalysis);
+
         if (areaAnalysis.success) {
-          console.log(`🏠 Buildings found: ${areaAnalysis.buildings.total_buildings.toLocaleString()}`);
-          console.log(`👥 Population: ${areaAnalysis.population.total_population.toLocaleString()}`);
-          console.log(`🏥 Hospitals: ${areaAnalysis.summary.critical_facilities.hospitals}`);
-          console.log(`🏫 Schools: ${areaAnalysis.summary.critical_facilities.schools}`);
+          console.log(
+            `🏠 Buildings found: ${areaAnalysis.buildings.total_buildings.toLocaleString()}`
+          );
+          console.log(
+            `👥 Population: ${areaAnalysis.population.total_population.toLocaleString()}`
+          );
+          console.log(
+            `🏥 Hospitals: ${areaAnalysis.summary.critical_facilities.hospitals}`
+          );
+          console.log(
+            `🏫 Schools: ${areaAnalysis.summary.critical_facilities.schools}`
+          );
         }
       } catch (error) {
-        console.error('Failed to get area analysis:', error);
+        console.error("Failed to get area analysis:", error);
       }
     }
 
@@ -70,7 +83,9 @@ function App() {
       const analysisData = {
         coordinates: drawingData.coordinates,
         magnitude: magnitude,
-        center: drawingData.boundingBox ? drawingData.boundingBox.center : mapConfig.center,
+        center: drawingData.boundingBox
+          ? drawingData.boundingBox.center
+          : mapConfig.center,
         placeName: "Current location", // Could be enhanced with reverse geocoding
         boundingBox: drawingData.boundingBox,
       };
