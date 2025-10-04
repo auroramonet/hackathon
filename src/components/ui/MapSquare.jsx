@@ -12,6 +12,7 @@ const MapSquare = ({
   bearing = 0,
   isDrawingMode,
   drawingColor,
+  drawingMagnitude,
   onDrawingComplete,
   className = '',
   ...props 
@@ -19,9 +20,9 @@ const MapSquare = ({
   const containerStyle = fullScreen 
     ? {
         width: '100vw',
-        height: 'calc(100vh - 300px)', // Subtract header + search + drawing controls
+        height: 'calc(100vh - 80px)', // Full height minus header
         position: 'fixed',
-        top: '300px', // Start below header, search, and drawing controls
+        top: '80px', // Start below header
         left: 0,
         zIndex: 1000,
       }
@@ -45,6 +46,7 @@ const MapSquare = ({
         bearing={bearing}
         isDrawingMode={isDrawingMode}
         drawingColor={drawingColor}
+        drawingMagnitude={drawingMagnitude}
         onDrawingComplete={onDrawingComplete}
       />
     </div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, MapSquare, SearchBox, DrawingButton, ColorPicker } from './components';
+import { Layout, MapSquare, SearchBox, DrawingButton, MagnitudeSlider } from './components';
 import './App.css';
 
 function App() {
@@ -11,7 +11,7 @@ function App() {
   });
   
   const [isDrawing, setIsDrawing] = useState(false);
-  const [drawingColor, setDrawingColor] = useState('#ff4444');
+  const [magnitude, setMagnitude] = useState(5.0); // Magnitude from 0 to 10
 
   const handleLocationSelect = (locationData) => {
     console.log('Location selected:', locationData);
@@ -39,24 +39,6 @@ function App() {
           <h1>Catastrophe Data</h1>
           <p>Search and explore locations in 3D</p>
         </div>
-        
-        <div className="app-search">
-          <SearchBox 
-            onLocationSelect={handleLocationSelect}
-            placeholder="Search for any location..."
-          />
-        </div>
-        
-        <div className="app-drawing-controls">
-          <DrawingButton 
-            isActive={isDrawing}
-            onClick={() => setIsDrawing(!isDrawing)}
-          />
-          <ColorPicker 
-            color={drawingColor}
-            onChange={setDrawingColor}
-          />
-        </div>
       </div>
       
       <MapSquare 
@@ -68,9 +50,32 @@ function App() {
         bearing={mapConfig.bearing}
         style="mapbox://styles/mapbox/satellite-streets-v12"
         isDrawingMode={isDrawing}
-        drawingColor={drawingColor}
+        drawingColor="#ff4444"
+        drawingMagnitude={magnitude}
         onDrawingComplete={handleDrawingComplete}
       />
+      
+      <div className="app-map-controls">
+        <div className="app-controls-left">
+          <div className="app-drawing-controls">
+            <DrawingButton 
+              isActive={isDrawing}
+              onClick={() => setIsDrawing(!isDrawing)}
+            />
+            <MagnitudeSlider 
+              magnitude={magnitude}
+              onChange={setMagnitude}
+            />
+          </div>
+          
+          <div className="app-search">
+            <SearchBox 
+              onLocationSelect={handleLocationSelect}
+              placeholder="Search for any location..."
+            />
+          </div>
+        </div>
+      </div>
     </>
   );
 }

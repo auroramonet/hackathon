@@ -12,6 +12,7 @@ const Map = ({
   bearing = -17.6, // Map rotation in degrees
   isDrawingMode = false,
   drawingColor = '#ff4444',
+  drawingMagnitude = 5.0, // Magnitude from 0 to 10
   onDrawingComplete,
   className = '',
   ...props 
@@ -94,166 +95,7 @@ const Map = ({
           
           console.log('Added persistent 3D buildings with no zoom restrictions');
           
-          // Add catastrophe data source
-          map.current.addSource('catastrophe-data', {
-            type: 'geojson',
-            data: {
-              type: 'FeatureCollection',
-              features: [
-                {
-                  type: 'Feature',
-                  geometry: {
-                    type: 'Polygon',
-                    coordinates: [[
-                      [-74.010, 40.710],
-                      [-74.005, 40.710],
-                      [-74.005, 40.715],
-                      [-74.010, 40.715],
-                      [-74.010, 40.710]
-                    ]]
-                  },
-                  properties: {
-                    height: 50,
-                    base_height: 0,
-                    color: '#ff4444',
-                    type: 'flood',
-                    severity: 'high'
-                  }
-                },
-                {
-                  type: 'Feature',
-                  geometry: {
-                    type: 'Polygon',
-                    coordinates: [[
-                      [-74.015, 40.705],
-                      [-74.012, 40.705],
-                      [-74.012, 40.708],
-                      [-74.015, 40.708],
-                      [-74.015, 40.705]
-                    ]]
-                  },
-                  properties: {
-                    height: 80,
-                    base_height: 0,
-                    color: '#ff8800',
-                    type: 'fire',
-                    severity: 'critical'
-                  }
-                },
-                {
-                  type: 'Feature',
-                  geometry: {
-                    type: 'Polygon',
-                    coordinates: [[
-                      [-74.000, 40.720],
-                      [-73.995, 40.720],
-                      [-73.995, 40.725],
-                      [-74.000, 40.725],
-                      [-74.000, 40.720]
-                    ]]
-                  },
-                  properties: {
-                    height: 30,
-                    base_height: 0,
-                    color: '#4488ff',
-                    type: 'earthquake',
-                    severity: 'medium'
-                  }
-                }
-              ]
-            }
-          });
-
-          // Create multi-layer fading effect by stacking layers with decreasing opacity
-          // Bottom layer (0-40% height): Most opaque (0.9)
-          map.current.addLayer({
-            id: 'catastrophe-3d-layer-bottom',
-            type: 'fill-extrusion',
-            source: 'catastrophe-data',
-            paint: {
-              'fill-extrusion-color': ['get', 'color'],
-              'fill-extrusion-height': ['*', ['get', 'height'], 0.4],
-              'fill-extrusion-base': 0,
-              'fill-extrusion-opacity': 0.9
-            }
-          });
-          
-          // Middle-bottom layer (40-60% height): Medium-high opacity (0.7)
-          map.current.addLayer({
-            id: 'catastrophe-3d-layer-mid-bottom',
-            type: 'fill-extrusion',
-            source: 'catastrophe-data',
-            paint: {
-              'fill-extrusion-color': ['get', 'color'],
-              'fill-extrusion-height': ['*', ['get', 'height'], 0.6],
-              'fill-extrusion-base': ['*', ['get', 'height'], 0.4],
-              'fill-extrusion-opacity': 0.7
-            }
-          });
-          
-          // Middle-top layer (60-80% height): Medium opacity (0.5)
-          map.current.addLayer({
-            id: 'catastrophe-3d-layer-mid-top',
-            type: 'fill-extrusion',
-            source: 'catastrophe-data',
-            paint: {
-              'fill-extrusion-color': ['get', 'color'],
-              'fill-extrusion-height': ['*', ['get', 'height'], 0.8],
-              'fill-extrusion-base': ['*', ['get', 'height'], 0.6],
-              'fill-extrusion-opacity': 0.5
-            }
-          });
-          
-          // Top layer (80-100% height): Most transparent (0.25)
-          map.current.addLayer({
-            id: 'catastrophe-3d-layer-top',
-            type: 'fill-extrusion',
-            source: 'catastrophe-data',
-            paint: {
-              'fill-extrusion-color': ['get', 'color'],
-              'fill-extrusion-height': ['get', 'height'],
-              'fill-extrusion-base': ['*', ['get', 'height'], 0.8],
-              'fill-extrusion-opacity': 0.25
-            }
-          });
-          
-          console.log('Added multi-layer catastrophe 3D visualization with opacity fade effect');
-          
-          // Add click interaction for catastrophe areas (only need to bind to bottom layer)
-          const handleCatastropheClick = (e) => {
-            const properties = e.features[0].properties;
-            
-            new mapboxgl.Popup()
-              .setLngLat(e.lngLat)
-              .setHTML(`
-                <div style="padding: 10px;">
-                  <h3 style="margin: 0 0 8px 0; color: ${properties.color};">
-                    ${properties.type.toUpperCase()} ALERT
-                  </h3>
-                  <p style="margin: 0; font-size: 14px;">
-                    <strong>Severity:</strong> ${properties.severity}<br>
-                    <strong>Height:</strong> ${properties.height}m<br>
-                    <strong>Type:</strong> ${properties.type}
-                  </p>
-                </div>
-              `)
-              .addTo(map.current);
-          };
-          
-          // Bind click to all layers
-          ['catastrophe-3d-layer-bottom', 'catastrophe-3d-layer-mid-bottom', 
-           'catastrophe-3d-layer-mid-top', 'catastrophe-3d-layer-top'].forEach(layerId => {
-            map.current.on('click', layerId, handleCatastropheClick);
-            
-            // Change cursor on hover
-            map.current.on('mouseenter', layerId, () => {
-              map.current.getCanvas().style.cursor = 'pointer';
-            });
-            
-            map.current.on('mouseleave', layerId, () => {
-              map.current.getCanvas().style.cursor = '';
-            });
-          });
+          console.log('Map initialized - ready for drawing');
         });
 
         map.current.on('error', (e) => {
@@ -368,9 +210,10 @@ const Map = ({
         coordinates.push(coordinates[0]);
         
         const polygonId = `drawn-polygon-${Date.now()}`;
-        const height = 60;
+        // Calculate height based on magnitude: 0 = 10m, 10 = 100m
+        const height = 10 + (drawingMagnitude * 9);
         
-        // Add 3D polygon with multi-layer fading effect
+        // Add 3D polygon with single semi-transparent layer
         map.current.addSource(polygonId, {
           type: 'geojson',
           data: {
@@ -381,65 +224,26 @@ const Map = ({
             },
             properties: {
               color: drawingColor,
-              height: height
+              height: height,
+              magnitude: drawingMagnitude
             }
           }
         });
         
-        // Create 4 stacked layers for fading effect
-        // Bottom layer (0-40%): Most opaque
+        // Single semi-transparent layer - height corresponds to magnitude
         map.current.addLayer({
-          id: `${polygonId}-bottom`,
-          type: 'fill-extrusion',
-          source: polygonId,
-          paint: {
-            'fill-extrusion-color': drawingColor,
-            'fill-extrusion-height': height * 0.4,
-            'fill-extrusion-base': 0,
-            'fill-extrusion-opacity': 0.9
-          }
-        });
-        
-        // Middle-bottom layer (40-60%)
-        map.current.addLayer({
-          id: `${polygonId}-mid-bottom`,
-          type: 'fill-extrusion',
-          source: polygonId,
-          paint: {
-            'fill-extrusion-color': drawingColor,
-            'fill-extrusion-height': height * 0.6,
-            'fill-extrusion-base': height * 0.4,
-            'fill-extrusion-opacity': 0.7
-          }
-        });
-        
-        // Middle-top layer (60-80%)
-        map.current.addLayer({
-          id: `${polygonId}-mid-top`,
-          type: 'fill-extrusion',
-          source: polygonId,
-          paint: {
-            'fill-extrusion-color': drawingColor,
-            'fill-extrusion-height': height * 0.8,
-            'fill-extrusion-base': height * 0.6,
-            'fill-extrusion-opacity': 0.5
-          }
-        });
-        
-        // Top layer (80-100%): Most transparent
-        map.current.addLayer({
-          id: `${polygonId}-top`,
+          id: polygonId,
           type: 'fill-extrusion',
           source: polygonId,
           paint: {
             'fill-extrusion-color': drawingColor,
             'fill-extrusion-height': height,
-            'fill-extrusion-base': height * 0.8,
-            'fill-extrusion-opacity': 0.25
+            'fill-extrusion-base': 0,
+            'fill-extrusion-opacity': 0.4
           }
         });
         
-        console.log('Created multi-layer 3D polygon with opacity fade -', drawingPath.current.length, 'points');
+        console.log(`Created 3D polygon - Magnitude: ${drawingMagnitude.toFixed(1)}, Height: ${height.toFixed(1)}m, Points: ${drawingPath.current.length}`);
         
         if (onDrawingComplete) {
           onDrawingComplete({
@@ -493,7 +297,27 @@ const Map = ({
         map.current.off('mouseup', handleMouseUp);
       }
     };
-  }, [isDrawingMode, drawingColor, onDrawingComplete]);
+  }, [isDrawingMode, drawingColor, drawingMagnitude, onDrawingComplete]);
+
+  // Force map resize when container dimensions change
+  useEffect(() => {
+    const resizeMap = () => {
+      if (map.current) {
+        // Small delay to ensure container has resized
+        setTimeout(() => {
+          map.current.resize();
+        }, 100);
+      }
+    };
+
+    window.addEventListener('resize', resizeMap);
+    // Also resize on mount
+    resizeMap();
+
+    return () => {
+      window.removeEventListener('resize', resizeMap);
+    };
+  }, []);
 
   return (
     <div 

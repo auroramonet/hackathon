@@ -4,3 +4,4 @@ export { default as MapSquare } from './MapSquare';
 export { default as SearchBox } from './SearchBox';
 export { default as DrawingButton } from './DrawingButton';
 export { default as ColorPicker } from './ColorPicker';
+export { default as MagnitudeSlider } from './MagnitudeSlider';
