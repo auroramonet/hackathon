@@ -10,8 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@mapbox/mapbox-gl-geocoder": "^5.1.2",
     "mapbox-gl": "^3.15.0",
+=======
+    "mapbox-gl": "^3.15.0",
+    "openai": "^6.1.0",
+>>>>>>> a438eef1ffd5f98e8a4cce90ea067b053d041c33
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
