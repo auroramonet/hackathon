@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Layout, MapSquare, SearchBox } from './components';
+import { Layout, MapSquare, SearchBox, DrawingButton, ColorPicker } from './components';
 import './App.css';
 
 function App() {
@@ -9,6 +9,9 @@ function App() {
     pitch: 45,
     bearing: -17.6
   });
+  
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [drawingColor, setDrawingColor] = useState('#ff4444');
 
   const handleLocationSelect = (locationData) => {
     console.log('Location selected:', locationData);
@@ -22,6 +25,11 @@ function App() {
       console.log('Updated map config:', newConfig);
       return newConfig;
     });
+  };
+
+  const handleDrawingComplete = (drawingData) => {
+    console.log('Drawing completed:', drawingData);
+    setIsDrawing(false);
   };
 
   return (
@@ -38,6 +46,17 @@ function App() {
             placeholder="Search for any location..."
           />
         </div>
+        
+        <div className="app-drawing-controls">
+          <DrawingButton 
+            isActive={isDrawing}
+            onClick={() => setIsDrawing(!isDrawing)}
+          />
+          <ColorPicker 
+            color={drawingColor}
+            onChange={setDrawingColor}
+          />
+        </div>
       </div>
       
       <MapSquare 
@@ -48,6 +67,9 @@ function App() {
         pitch={mapConfig.pitch}
         bearing={mapConfig.bearing}
         style="mapbox://styles/mapbox/satellite-streets-v12"
+        isDrawingMode={isDrawing}
+        drawingColor={drawingColor}
+        onDrawingComplete={handleDrawingComplete}
       />
     </>
   );

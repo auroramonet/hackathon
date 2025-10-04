@@ -39,6 +39,18 @@
   transform: translateX(-50%);
   pointer-events: auto;
 }
+
+.app-drawing-controls {
+  position: absolute;
+  top: 240px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
 /* Map container styles */
 .map-container {
   width: 100%;
