@@ -3,6 +3,47 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './Map.css';
 
+// Helper function to calculate bounding box from any polygon
+function calculateBoundingBox(coordinates) {
+  if (!coordinates || coordinates.length === 0) {
+    return null;
+  }
+  
+  let minLat = Infinity;
+  let maxLat = -Infinity;
+  let minLon = Infinity;
+  let maxLon = -Infinity;
+  
+  // Find the extreme points from ALL coordinates
+  coordinates.forEach(coord => {
+    const [lon, lat] = coord;
+    
+    if (lat < minLat) minLat = lat;
+    if (lat > maxLat) maxLat = lat;
+    if (lon < minLon) minLon = lon;
+    if (lon > maxLon) maxLon = lon;
+  });
+  
+  return {
+    // The 4 corner points of the bounding rectangle
+    southwest: [minLon, minLat],
+    northeast: [maxLon, maxLat],
+    
+    // For API calls (south, west, north, east)
+    south: minLat,
+    west: minLon, 
+    north: maxLat,
+    east: maxLon,
+    
+    // Center point
+    center: [(minLon + maxLon) / 2, (minLat + maxLat) / 2],
+    
+    // Dimensions
+    width: maxLon - minLon,
+    height: maxLat - minLat
+  };
+}
+
 const Map = ({ 
   accessToken = import.meta.env.VITE_MAPBOX_TOKEN, // Use environment variable
   center = [-74.0066, 40.7135], // Default to NYC coordinates
@@ -243,13 +284,26 @@ const Map = ({
           }
         });
         
+        // Calculate bounding box for API calls
+        const boundingBox = calculateBoundingBox(coordinates);
+        
         console.log(`Created 3D polygon - Magnitude: ${drawingMagnitude.toFixed(1)}, Height: ${height.toFixed(1)}m, Points: ${drawingPath.current.length}`);
+        console.log('Bounding box:', boundingBox);
         
         if (onDrawingComplete) {
           onDrawingComplete({
             id: polygonId,
             coordinates: coordinates,
-            color: drawingColor
+            color: drawingColor,
+            magnitude: drawingMagnitude,
+            boundingBox: boundingBox,
+            // For population/building APIs
+            apiCoordinates: {
+              south: boundingBox.south,
+              west: boundingBox.west,
+              north: boundingBox.north,
+              east: boundingBox.east
+            }
           });
         }
       }
