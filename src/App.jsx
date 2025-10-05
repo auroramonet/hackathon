@@ -108,7 +108,7 @@ function App() {
     <>
       <div className="app-overlay">
         <div className="app-header">
-          <h1>DisasteRisk*</h1>
+          <h1>DisateRisk*</h1>
         </div>
       </div>
 
