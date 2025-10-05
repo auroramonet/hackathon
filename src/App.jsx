@@ -108,8 +108,7 @@ function App() {
     <>
       <div className="app-overlay">
         <div className="app-header">
-          <h1>Catastrophe Data</h1>
-          <p>Search and explore locations in 3D</p>
+          <h1>DisasteRisk*</h1>
         </div>
       </div>
 
