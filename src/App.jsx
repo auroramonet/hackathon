@@ -6,6 +6,7 @@ import {
   DrawingButton,
   MagnitudeSlider,
 } from "./components";
+import Tutorial from "./components/ui/Tutorial";
 import { analyzeArea } from "./services/api";
 import { getCompleteAreaAnalysis } from "./utils/apiUtils";
 import "./App.css";
@@ -22,7 +23,7 @@ function App() {
   const [magnitude, setMagnitude] = useState(5.0); // Magnitude from 0 to 10
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [lastDrawnArea, setLastDrawnArea] = useState(null);
+  const [_lastDrawnArea, setLastDrawnArea] = useState(null);
 
   const handleLocationSelect = (locationData) => {
     console.log("Location selected:", locationData);
@@ -106,25 +107,66 @@ function App() {
 
   return (
     <>
+      <Tutorial />
+
       <div className="app-overlay">
         <div className="app-header">
-          <h1>DisasteRisk</h1>
+          <div className="app-header-content">
+            <div className="app-logo">
+              <span className="app-logo-icon">🌍</span>
+              <h1>DisasteRisk*</h1>
+            </div>
+            <p className="app-tagline">
+              Real-time disaster data + AI impact analysis
+            </p>
+          </div>
+          <button
+            className="help-button"
+            onClick={() => {
+              localStorage.removeItem("hasSeenTutorial");
+              window.location.reload();
+            }}
+            title="Show Tutorial"
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
+              <circle cx="12" cy="12" r="10"></circle>
+              <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </button>
         </div>
       </div>
 
-      <MapSquare
-        key={`map-${mapConfig.center[0]}-${mapConfig.center[1]}`}
-        fullScreen={true}
-        center={mapConfig.center}
-        zoom={mapConfig.zoom}
-        pitch={mapConfig.pitch}
-        bearing={mapConfig.bearing}
-        style="mapbox://styles/mapbox/satellite-streets-v12"
-        isDrawingMode={isDrawing}
-        drawingColor="#ff4444"
-        drawingMagnitude={magnitude}
-        onDrawingComplete={handleDrawingComplete}
-      />
+      <div
+        className={isDrawing ? "map-container drawing-mode" : "map-container"}
+      >
+        <MapSquare
+          key={`map-${mapConfig.center[0]}-${mapConfig.center[1]}`}
+          fullScreen={true}
+          center={mapConfig.center}
+          zoom={mapConfig.zoom}
+          pitch={mapConfig.pitch}
+          bearing={mapConfig.bearing}
+          style="mapbox://styles/mapbox/satellite-streets-v12"
+          isDrawingMode={isDrawing}
+          drawingColor="#ff4444"
+          drawingMagnitude={magnitude}
+          onDrawingComplete={handleDrawingComplete}
+        />
+        {isDrawing && (
+          <div className="drawing-mode-indicator">
+            <span className="pulse-dot"></span>
+            Drawing Mode Active - Click on map to draw
+          </div>
+        )}
+      </div>
 
       <div className="app-map-controls">
         <div className="app-controls-left">
@@ -161,7 +203,10 @@ function App() {
               {isAnalyzing ? (
                 <div className="ai-analysis-loading">
                   <div className="spinner"></div>
-                  <p>Analyzing catastrophe area...</p>
+                  <p>🔍 Analyzing area data...</p>
+                  <p className="loading-subtext">
+                    Fetching population & building data
+                  </p>
                 </div>
               ) : aiAnalysis.error ? (
                 <div className="ai-analysis-error">
@@ -170,9 +215,12 @@ function App() {
               ) : (
                 <div className="ai-analysis-content">
                   <div className="ai-analysis-metadata">
-                    <span>
-                      Magnitude: {aiAnalysis.metadata?.magnitude.toFixed(1)}
-                    </span>
+                    <div className="metadata-item">
+                      <span className="metadata-icon">📊</span>
+                      <span>
+                        Magnitude: {aiAnalysis.metadata?.magnitude.toFixed(1)}
+                      </span>
+                    </div>
                     {aiAnalysis.metadata?.severity && (
                       <span
                         className={`severity-badge severity-${aiAnalysis.metadata.severity.toLowerCase()}`}
@@ -181,7 +229,10 @@ function App() {
                       </span>
                     )}
                     {aiAnalysis.metadata?.areaSize && (
-                      <span>Area: {aiAnalysis.metadata.areaSize}</span>
+                      <div className="metadata-item">
+                        <span className="metadata-icon">📍</span>
+                        <span>Area: {aiAnalysis.metadata.areaSize}</span>
+                      </div>
                     )}
                   </div>
                   <div className="ai-analysis-text">{aiAnalysis.analysis}</div>

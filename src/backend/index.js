@@ -387,7 +387,7 @@ app.post("/api/analyze", async (req, res) => {
           : 0,
     };
 
-    const prompt = `You are an emergency response analyst. Provide a rapid incident assessment in EXACTLY 250-300 words using REAL DATA.
+    const prompt = `You are an emergency response analyst. Provide a rapid incident assessment in EXACTLY 300-350 words. NO asterisks, NO markdown, PLAIN TEXT ONLY.
 
 INCIDENT DATA:
 Location: ${placeName || "Unspecified location"}
@@ -427,22 +427,33 @@ Pharmacies: ${realWorldData.buildings.summary.critical_facilities.pharmacies}
 Total Critical Facilities: ${realWorldData.buildings.summary.total_critical}
 
 FORMAT REQUIREMENTS:
-- PLAIN TEXT ONLY - absolutely NO asterisks, NO markdown, NO special formatting
+- PLAIN TEXT ONLY - NO asterisks, NO markdown formatting
 - Use specific percentages and numbers, not vague terms
 - Combine related items into single lines
 - Maximum 250-300 words total
 - Short, scannable sentences
+- SEVERITY ASSESSMENT section MUST use bullet points (dash format: - Item)
+- All other sections use regular paragraph format
 
 ANALYSIS STRUCTURE (USE THE REAL DATA ABOVE):
 
-SEVERITY ASSESSMENT
-Threat Level: ${severity.level}
-Estimated Casualties: [Base on ${realWorldData.estimated_affected_people.toLocaleString()} affected people and magnitude ${magnitude.toFixed(
+SEVERITY ASSESSMENT (USE BULLET POINTS WITH DASHES):
+- Threat Level: ${severity.level}
+- Estimated Casualties: [Base on ${realWorldData.estimated_affected_people.toLocaleString()} affected people and magnitude ${magnitude.toFixed(
       1
     )}]
-Time Window: [State hours/days for critical response]
-Infrastructure Damage: [Consider ${realWorldData.buildings.total_buildings.toLocaleString()} total buildings]
-Economic Impact: [Base on population and building density]
+- Time Window: [State hours/days for critical response]
+- Infrastructure Damage: [Consider ${realWorldData.buildings.total_buildings.toLocaleString()} total buildings]
+- Economic Impact: [Base on population and building density]
+
+SHELTER GUIDANCE:
+[Based on ${
+      severity.level
+    } severity, recommend whether residents should: stay indoors if buildings stable, evacuate to open spaces if severe damage expected, or shelter in place if minimal risk. Mention ${
+      realWorldData.buildings.summary.critical_facilities.schools
+    } schools and ${
+      realWorldData.buildings.summary.critical_facilities.fire_stations
+    } fire stations as potential safe zones only if evacuation necessary. Scale urgency to threat level.] Note: Use your best judgment and assess your immediate surroundings. This guidance may not apply to all situations.
 
 AFFECTED POPULATION
 Total Impact: ${realWorldData.estimated_affected_people.toLocaleString()} people directly affected
@@ -473,15 +484,16 @@ Coordination: [Use existing ${
       realWorldData.buildings.summary.critical_facilities.police_stations
     } emergency facilities]
 
+RECOVERY & CONTEXT:
+Recovery duration: [Estimate based on severity]
+Historical comparison: [Compare to similar magnitude events]
+Economic impact: [Estimate from ${realWorldData.buildings.summary.commercial_buildings.toLocaleString()} commercial buildings]
+Regional note: [Brief context about ${placeName || "the area"}'s vulnerability]
+
 TIMELINE
 Recovery Estimate: [Based on infrastructure density and damage scale]
 
-CRITICAL NOTES:
-- Be hyper-specific with numbers
-- No lists longer than 3 items
-- Combine utilities/infrastructure into percentages
-- One hazard type per mention only
-- Ruthlessly eliminate repetition`;
+COMPLETE THE FULL 300-350 WORD COUNT with specific numbers throughout.`;
 
     const result = await model.generateContent(prompt);
     const response = await result.response;
